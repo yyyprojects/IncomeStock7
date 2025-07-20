@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Income Stocks: A Beginner's Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Neutrals -->
+    <!-- Application Structure Plan: The SPA is designed as a top-to-bottom educational journey for a beginner. It starts with a simple "What is it?" hero section, moves to a core interactive comparison ("Income vs. Growth") to establish context, then demonstrates the primary benefit ("The Power of Dividends") with an interactive chart. It then organizes information by showing "Where to Find Them" (Sectors), provides "Investor Tools" (Metrics & Risks) for practical understanding, and concludes with "Key Takeaways." This thematic, scrolling structure is more intuitive for learning than a report's structure, guiding the user logically from concept to application. Smooth-scrolling navigation makes it easy to jump between these learning modules. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Core Definition -> Goal: Inform -> Viz: Analogy-driven text -> Interaction: None -> Justification: Foundational knowledge needs clarity. -> Library: HTML.
+        - Report Info: Income vs. Growth -> Goal: Compare -> Viz: Interactive Tabs -> Interaction: Click to toggle views -> Justification: Active comparison aids learning. -> Library: JS.
+        - Report Info: Dividend Compounding -> Goal: Show Change -> Viz: Line Chart & Calculator -> Interaction: User inputs data, chart updates -> Justification: Makes abstract growth tangible. -> Library: Chart.js.
+        - Report Info: Sectors -> Goal: Organize -> Viz: Icon/Card Grid -> Interaction: Hover for info -> Justification: Visually engaging, easy to scan. -> Library: HTML/CSS.
+        - Report Info: Metrics & Risks -> Goal: Analyze -> Viz: Interactive Calculator & Pros/Cons List -> Interaction: Input data, click to expand -> Justification: Provides tools and breaks down complex info. -> Library: JS.
+        - Report Info: Summary -> Goal: Inform -> Viz: Bulleted list -> Interaction: None -> Justification: Reinforces key lessons. -> Library: HTML.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F5F4;
+            color: #333333;
+        }
+        .nav-link {
+            transition: color 0.3s ease, border-bottom-color 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #4C785C;
+            border-bottom-color: #4C785C;
+        }
+        .content-section {
+            scroll-margin-top: 80px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+        .tab-button {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .tab-button.active {
+            background-color: #4C785C;
+            color: white;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="header" class="bg-stone-100/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-xl font-bold text-stone-800">
+                Income Stocks 101
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#definition" class="nav-link text-sm font-medium text-stone-600 pb-1">What Are They?</a>
+                <a href="#comparison" class="nav-link text-sm font-medium text-stone-600 pb-1">Comparison</a>
+                <a href="#dividends" class="nav-link text-sm font-medium text-stone-600 pb-1">Dividends</a>
+                <a href="#sectors" class="nav-link text-sm font-medium text-stone-600 pb-1">Sectors</a>
+                <a href="#toolkit" class="nav-link text-sm font-medium text-stone-600 pb-1">Toolkit</a>
+            </div>
+            <div class="md:hidden">
+                <select id="mobile-nav" class="bg-white border border-stone-300 rounded-md py-1 px-2 text-sm text-stone-700">
+                    <option value="#definition">What Are They?</option>
+                    <option value="#comparison">Comparison</option>
+                    <option value="#dividends">Dividends</option>
+                    <option value="#sectors">Sectors</option>
+                    <option value="#toolkit">Toolkit</option>
+                </select>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-8 md:py-16">
+        
+        <section id="definition" class="content-section text-center mb-20 md:mb-28">
+            <h1 class="text-4xl md:text-5xl font-bold text-stone-800 mb-4">What is an Income Stock?</h1>
+            <p class="max-w-3xl mx-auto text-lg text-stone-600 mb-8">
+                This guide breaks down income stocks in simple terms. You'll learn what they are, how they work, and what to look for, all without the complicated financial jargon.
+            </p>
+            <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8 items-center bg-white p-8 rounded-xl shadow-lg border border-stone-200">
+                <div class="text-center">
+                    <span class="text-8xl">🌳</span>
+                </div>
+                <div class="text-left">
+                    <h3 class="text-2xl font-bold text-stone-800 mb-3">Think of it Like an Apple Tree.</h3>
+                    <p class="text-stone-600 leading-relaxed">
+                        Imagine you own an apple orchard. You can make money in two ways: by selling the apples the trees produce each year, or by selling the orchard itself for a higher price later.
+                        <br><br>
+                        An <strong>income stock</strong> is like buying a tree primarily for its steady supply of apples (the <span class="font-semibold text-green-700">dividends</span>). A <strong>growth stock</strong> is like buying a young sapling, hoping it grows into a giant tree you can sell for a big profit, even if it doesn't give you many apples along the way.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="comparison" class="content-section mb-20 md:mb-28">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl md:text-4xl font-bold text-stone-800">Income vs. Growth Stocks</h2>
+                <p class="max-w-2xl mx-auto text-stone-600 mt-2">
+                    Investors choose between these two types of stocks based on their financial goals. This section helps you understand the fundamental differences. Click on each type to see its key characteristics.
+                </p>
+            </div>
+            <div class="max-w-4xl mx-auto">
+                <div class="flex justify-center mb-6 border border-stone-200 rounded-lg p-1 bg-stone-100">
+                    <button id="income-btn" class="tab-button active w-1/2 py-2 px-4 rounded-md font-medium">Income Stocks</button>
+                    <button id="growth-btn" class="tab-button w-1/2 py-2 px-4 rounded-md font-medium">Growth Stocks</button>
+                </div>
+                <div id="comparison-content" class="bg-white p-8 rounded-xl shadow-lg border border-stone-200">
+                </div>
+            </div>
+        </section>
+
+        <section id="dividends" class="content-section mb-20 md:mb-28">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl md:text-4xl font-bold text-stone-800">The Power of Dividends & Compounding</h2>
+                <p class="max-w-2xl mx-auto text-stone-600 mt-2">
+                    Dividends are cash payments from a company to its shareholders. When you reinvest these dividends to buy more shares, your investment can grow exponentially over time. This "snowball effect" is called compounding. Use the calculator below to see it in action.
+                </p>
+            </div>
+            <div class="card p-6 md:p-8">
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div>
+                        <label for="initial-investment" class="block text-sm font-medium text-stone-600 mb-1">Initial Investment ($)</label>
+                        <input type="number" id="initial-investment" value="10000" class="w-full p-2 border border-stone-300 rounded-md">
+                    </div>
+                    <div>
+                        <label for="dividend-yield" class="block text-sm font-medium text-stone-600 mb-1">Annual Dividend Yield (%)</label>
+                        <input type="number" id="dividend-yield" value="4" class="w-full p-2 border border-stone-300 rounded-md">
+                    </div>
+                    <div>
+                        <label for="investment-years" class="block text-sm font-medium text-stone-600 mb-1">Years to Invest</label>
+                        <input type="number" id="investment-years" value="20" class="w-full p-2 border border-stone-300 rounded-md">
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="compounding-chart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="sectors" class="content-section mb-20 md:mb-28">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl md:text-4xl font-bold text-stone-800">Where to Find Income Stocks</h2>
+                <p class="max-w-2xl mx-auto text-stone-600 mt-2">
+                    Income stocks are typically found in established, stable industries with predictable cash flows. These companies are often market leaders and don't need to reinvest all their profits to grow. Here are some common sectors in the U.S. where you can find them.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="card p-6 text-center">
+                    <div class="text-4xl mb-4">💡</div>
+                    <h3 class="text-xl font-bold mb-2">Utilities</h3>
+                    <p class="text-stone-600 text-sm">Companies providing essential services like electricity, gas, and water. Their revenues are very stable because people always need these services.</p>
+                </div>
+                <div class="card p-6 text-center">
+                    <div class="text-4xl mb-4">🛒</div>
+                    <h3 class="text-xl font-bold mb-2">Consumer Staples</h3>
+                    <p class="text-stone-600 text-sm">Firms that sell everyday necessities like food, beverages, and household products. Demand for these goods is consistent, regardless of the economy.</p>
+                </div>
+                <div class="card p-6 text-center">
+                    <div class="text-4xl mb-4">🏢</div>
+                    <h3 class="text-xl font-bold mb-2">Real Estate (REITs)</h3>
+                    <p class="text-stone-600 text-sm">Real Estate Investment Trusts own income-producing properties. By law, they must distribute at least 90% of their taxable income to shareholders.</p>
+                </div>
+                <div class="card p-6 text-center">
+                    <div class="text-4xl mb-4">💊</div>
+                    <h3 class="text-xl font-bold mb-2">Healthcare</h3>
+                    <p class="text-stone-600 text-sm">Large, established pharmaceutical and healthcare companies with strong track records of profits and products that are always in demand.</p>
+                </div>
+                <div class="card p-6 text-center">
+                    <div class="text-4xl mb-4">📞</div>
+                    <h3 class="text-xl font-bold mb-2">Telecommunications</h3>
+                    <p class="text-stone-600 text-sm">Major providers of phone, internet, and wireless services. These are often considered modern-day utilities that generate steady cash flow.</p>
+                </div>
+                <div class="card p-6 text-center">
+                    <div class="text-4xl mb-4">🏦</div>
+                    <h3 class="text-xl font-bold mb-2">Financials</h3>
+                    <p class="text-stone-600 text-sm">Well-established banks, insurance companies, and asset managers often have long histories of paying consistent dividends to their shareholders.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="toolkit" class="content-section mb-12">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl md:text-4xl font-bold text-stone-800">The Investor's Toolkit</h2>
+                <p class="max-w-2xl mx-auto text-stone-600 mt-2">
+                    Before investing, it's wise to understand a few key metrics and be aware of the potential benefits and risks. This section provides simple tools and clear explanations to help you evaluate income stocks.
+                </p>
+            </div>
+            <div class="grid lg:grid-cols-2 gap-8">
+                
+                <div class="space-y-8">
+                    <div class="card p-6">
+                        <h3 class="font-bold text-xl mb-3">Key Metric: Dividend Yield</h3>
+                        <p class="text-stone-600 mb-4 text-sm">This shows how much income a stock pays out each year relative to its price. A higher yield means more income per dollar invested. Calculate a stock's yield below.</p>
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="stock-price" class="text-sm font-medium">Stock Price ($)</label>
+                                <input id="stock-price" type="number" placeholder="e.g., 100" class="mt-1 w-full p-2 border border-stone-300 rounded-md">
+                            </div>
+                            <div>
+                                <label for="annual-dividend" class="text-sm font-medium">Annual Dividend ($)</label>
+                                <input id="annual-dividend" type="number" placeholder="e.g., 4" class="mt-1 w-full p-2 border border-stone-300 rounded-md">
+                            </div>
+                        </div>
+                        <div class="mt-4 text-center bg-stone-100 p-4 rounded-lg">
+                            <span class="text-stone-600">Calculated Yield:</span>
+                            <span id="yield-result" class="font-bold text-xl text-green-700 ml-2">--%</span>
+                        </div>
+                    </div>
+
+                    <div class="card p-6">
+                        <h3 class="font-bold text-xl mb-3">Key Metric: Payout Ratio</h3>
+                        <p class="text-stone-600 mb-4 text-sm">This is the percentage of a company's profit that it pays out as dividends. It helps you judge if the dividend is safe.</p>
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <span class="text-2xl mr-3">🟢</span>
+                                <div><strong class="text-green-700">Low (e.g., <50%):</strong> Healthy. The company has plenty of room to maintain or grow the dividend.</div>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="text-2xl mr-3">🟡</span>
+                                <div><strong class="text-yellow-600">Moderate (50-80%):</strong> Common. The dividend is covered, but there's less flexibility.</div>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="text-2xl mr-3">🔴</span>
+                                <div><strong class="text-red-600">High (>80%):</strong> Warning sign. The dividend could be at risk if profits decline. (Note: REITs are an exception and naturally have high payout ratios).</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card p-6">
+                    <h3 class="font-bold text-xl mb-4">Pros & Cons</h3>
+                    <p class="text-stone-600 mb-6 text-sm">Income stocks offer unique benefits but also come with specific risks. Click on each point to learn more.</p>
+                    <div id="pros-cons-list" class="space-y-2">
+                        <!-- Content injected by JS -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="summary" class="content-section bg-stone-800 text-white rounded-xl p-8 mt-20 md:mt-28">
+            <h2 class="text-3xl font-bold mb-4 text-center">Key Takeaways</h2>
+            <ul class="list-none space-y-4 max-w-3xl mx-auto">
+                <li class="flex items-start">
+                    <span class="text-green-400 mr-3 mt-1">✓</span>
+                    <p><strong>Focus on Income:</strong> Income stocks are chosen for their regular dividend payments, providing a steady stream of cash flow.</p>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-green-400 mr-3 mt-1">✓</span>
+                    <p><strong>Stability is Key:</strong> They are typically mature, stable companies in essential industries like utilities and consumer staples.</p>
+                </li>
+                 <li class="flex items-start">
+                    <span class="text-green-400 mr-3 mt-1">✓</span>
+                    <p><strong>Compounding is Powerful:</strong> Reinvesting dividends can significantly boost your long-term returns through the power of compounding.</p>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-green-400 mr-3 mt-1">✓</span>
+                    <p><strong>Dividends Aren't Guaranteed:</strong> Companies can cut or eliminate dividends if they face financial trouble, which is a key risk to be aware of.</p>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-green-400 mr-3 mt-1">✓</span>
+                    <p><strong>Look at Yield and Payout Ratio:</strong> Use these simple metrics to quickly assess a stock's income potential and the safety of its dividend.</p>
+                </li>
+            </ul>
+        </section>
+
+    </main>
+    
+    <footer class="text-center py-8 mt-8 border-t border-stone-200">
+        <p class="text-sm text-stone-500">This content is for informational purposes only and does not constitute financial advice.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const comparisonContent = {
+                income: `
+                    <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+                        <div>
+                            <h4 class="font-semibold text-stone-800">🎯 Main Goal</h4>
+                            <p class="text-sm text-stone-600">Generate a regular, predictable stream of income.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-stone-800">🏢 Company Type</h4>
+                            <p class="text-sm text-stone-600">Mature, established leaders in their industry.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-stone-800">💰 Dividend Policy</h4>
+                            <p class="text-sm text-stone-600">Pays out a significant portion of profits as dividends.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-stone-800">⚖️ Risk Level</h4>
+                            <p class="text-sm text-stone-600">Generally lower price volatility; dividends provide a cushion.</p>
+                        </div>
+                    </div>`,
+                growth: `
+                    <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+                        <div>
+                            <h4 class="font-semibold text-stone-800">🎯 Main Goal</h4>
+                            <p class="text-sm text-stone-600">Achieve significant growth in the stock's price (capital appreciation).</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-stone-800">🏢 Company Type</h4>
+                            <p class="text-sm text-stone-600">Younger companies in expanding industries, often in tech.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-stone-800">💰 Dividend Policy</h4>
+                            <p class="text-sm text-stone-600">Pays little to no dividend; reinvests profits for rapid growth.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-stone-800">⚖️ Risk Level</h4>
+                            <p class="text-sm text-stone-600">Higher price volatility; potential for high rewards but also high losses.</p>
+                        </div>
+                    </div>`
+            };
+
+            const prosConsData = [
+                { title: '✅ Pro: Regular Income', content: 'Dividends provide a predictable cash flow, which is ideal for retirees or anyone needing to supplement their income.' },
+                { title: '✅ Pro: Lower Volatility', content: 'The stock prices of mature companies tend to be more stable. During market downturns, dividends can provide a cushion to your total return.' },
+                { title: '✅ Pro: Power of Compounding', content: 'Reinvesting dividends allows you to buy more shares, which in turn generate more dividends, creating a powerful snowball effect over time.' },
+                { title: '❌ Con: Dividend Cuts', content: 'Dividends are not guaranteed. If a company\'s profits fall, it may reduce or eliminate its dividend, causing both your income and the stock price to drop.' },
+                { title: '❌ Con: Interest Rate Risk', content: 'When interest rates on safer investments like bonds rise, income stocks can become less attractive to investors, which may cause their prices to fall.' },
+                { title: '❌ Con: Slower Growth', content: 'Because these companies are already large and stable, their stock prices are less likely to experience the explosive growth seen in younger, high-growth companies.' },
+            ];
+
+            const incomeBtn = document.getElementById('income-btn');
+            const growthBtn = document.getElementById('growth-btn');
+            const comparisonDiv = document.getElementById('comparison-content');
+            
+            function updateComparisonContent(type) {
+                comparisonDiv.innerHTML = comparisonContent[type];
+                if (type === 'income') {
+                    incomeBtn.classList.add('active');
+                    growthBtn.classList.remove('active');
+                } else {
+                    growthBtn.classList.add('active');
+                    incomeBtn.classList.remove('active');
+                }
+            }
+
+            incomeBtn.addEventListener('click', () => updateComparisonContent('income'));
+            growthBtn.addEventListener('click', () => updateComparisonContent('growth'));
+            updateComparisonContent('income');
+
+            let compoundingChart;
+            const initialInvestmentEl = document.getElementById('initial-investment');
+            const dividendYieldEl = document.getElementById('dividend-yield');
+            const investmentYearsEl = document.getElementById('investment-years');
+            
+            function calculateCompounding() {
+                const initial = parseFloat(initialInvestmentEl.value) || 0;
+                const yieldPercent = parseFloat(dividendYieldEl.value) || 0;
+                const years = parseInt(investmentYearsEl.value) || 0;
+                const annualRate = yieldPercent / 100;
+
+                const labels = Array.from({ length: years + 1 }, (_, i) => `Year ${i}`);
+                const dataWithReinvest = [initial];
+                const dataWithoutReinvest = [initial];
+                let currentVal = initial;
+
+                for (let i = 1; i <= years; i++) {
+                    const dividend = currentVal * annualRate;
+                    currentVal += dividend;
+                    dataWithReinvest.push(currentVal);
+                    dataWithoutReinvest.push(initial + (initial * annualRate * i));
+                }
+                return { labels, dataWithReinvest, dataWithoutReinvest };
+            }
+
+            function updateChart() {
+                const { labels, dataWithReinvest, dataWithoutReinvest } = calculateCompounding();
+                if (compoundingChart) {
+                    compoundingChart.data.labels = labels;
+                    compoundingChart.data.datasets[0].data = dataWithReinvest;
+                    compoundingChart.data.datasets[1].data = dataWithoutReinvest;
+                    compoundingChart.update();
+                } else {
+                    const ctx = document.getElementById('compounding-chart').getContext('2d');
+                    compoundingChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Value (Dividends Reinvested)',
+                                data: dataWithReinvest,
+                                borderColor: '#4C785C',
+                                backgroundColor: 'rgba(76, 120, 92, 0.1)',
+                                borderWidth: 2,
+                                tension: 0.1,
+                                fill: true,
+                            }, {
+                                label: 'Value (No Reinvestment)',
+                                data: dataWithoutReinvest,
+                                borderColor: '#A8A29E',
+                                backgroundColor: 'rgba(168, 162, 158, 0.1)',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                tension: 0.1,
+                                fill: false,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: false,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return '$' + value.toLocaleString();
+                                        }
+                                    }
+                                }
+                            },
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            let label = context.dataset.label || '';
+                                            if (label) {
+                                                label += ': ';
+                                            }
+                                            if (context.parsed.y !== null) {
+                                                label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+                                            }
+                                            return label;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            [initialInvestmentEl, dividendYieldEl, investmentYearsEl].forEach(el => {
+                el.addEventListener('input', updateChart);
+            });
+            updateChart();
+
+            const stockPriceEl = document.getElementById('stock-price');
+            const annualDividendEl = document.getElementById('annual-dividend');
+            const yieldResultEl = document.getElementById('yield-result');
+
+            function calculateYield() {
+                const price = parseFloat(stockPriceEl.value);
+                const dividend = parseFloat(annualDividendEl.value);
+                if (price > 0 && dividend >= 0) {
+                    const yieldVal = (dividend / price) * 100;
+                    yieldResultEl.textContent = yieldVal.toFixed(2) + '%';
+                } else {
+                    yieldResultEl.textContent = '--%';
+                }
+            }
+            stockPriceEl.addEventListener('input', calculateYield);
+            annualDividendEl.addEventListener('input', calculateYield);
+
+            const prosConsList = document.getElementById('pros-cons-list');
+            prosConsData.forEach(item => {
+                const container = document.createElement('div');
+                container.className = 'border-b border-stone-200 last:border-b-0';
+                container.innerHTML = `
+                    <button class="w-full text-left p-4 flex justify-between items-center font-medium hover:bg-stone-50 rounded-md">
+                        <span>${item.title}</span>
+                        <span class="transform transition-transform duration-300 text-lg">+</span>
+                    </button>
+                    <div class="hidden text-sm text-stone-600 px-4 pb-4">
+                        ${item.content}
+                    </div>
+                `;
+                prosConsList.appendChild(container);
+
+                const button = container.querySelector('button');
+                const content = container.querySelector('div');
+                const icon = container.querySelector('span:last-child');
+                button.addEventListener('click', () => {
+                    const isVisible = !content.classList.contains('hidden');
+                    content.classList.toggle('hidden');
+                    icon.textContent = isVisible ? '+' : '−';
+                    icon.classList.toggle('rotate-180', !isVisible)
+                });
+            });
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.content-section');
+            const mobileNav = document.getElementById('mobile-nav');
+
+            function smoothScroll(targetId) {
+                const target = document.querySelector(targetId);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    smoothScroll(this.getAttribute('href'));
+                });
+            });
+
+            mobileNav.addEventListener('change', function() {
+                smoothScroll(this.value);
+            });
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.toggle('active', link.getAttribute('href').substring(1) === entry.target.id);
+                        });
+                        if (mobileNav.options[mobileNav.selectedIndex].value !== `#${entry.target.id}`) {
+                           for(let i=0; i < mobileNav.options.length; i++){
+                               if(mobileNav.options[i].value === `#${entry.target.id}`){
+                                   mobileNav.selectedIndex = i;
+                                   break;
+                               }
+                           }
+                        }
+                    }
+                });
+            }, { rootMargin: "-100px 0px -50% 0px" });
+
+            sections.forEach(section => observer.observe(section));
+
+        });
+    </script>
+</body>
+</html>
